@@ -3,6 +3,10 @@
 const eventsAPIs = (function () {
   const API_URL = "http://localhost:3000/events";
 
+  async function getEvent(id) {
+    return fetch(`${API_URL}/${id}`).then((res) => res.json());
+  }
+
   async function getEvents() {
     return fetch(API_URL).then((res) => res.json());
   }
@@ -24,11 +28,14 @@ const eventsAPIs = (function () {
   }
 
   return {
+    getEvent,
     getEvents,
     postEvent,
     deleteEvent,
   };
 })();
+
+
 
 let eventMusic = {
   eventName: "Music Festival",
@@ -56,6 +63,9 @@ class EventsModel {
   //   // }
 }
 
+function editEventHandler(id) {
+  console.log(id);
+}
 class EventsView {
   constructor() {
     this.newEventForm = document.querySelector("#new-events-form");
@@ -102,17 +112,47 @@ class EventsView {
 
   renderNewEvent(newEvent) {
     this.eventList.appendChild(this.createEventElement(newEvent));
+    this.eventList.appendChild(this.createEditEventElement(newEvent));
+  }
+
+  createEditEventElement(event) {
+    const eventElement = document.createElement("tr");
+    eventElement.style.visibility = "collapse"
+    eventElement.classList.add("event-view");
+    eventElement.setAttribute("id", event.id);
+    console.log("create html for event with id " + event.id);
+    eventElement.innerHTML = `
+    <form id="edit-events-form-${event.id}">
+    <td>
+      <input id="eventName__input-${event.id}" value=${event.eventName} />
+    </td>
+    <td>
+      <input id="startDate__input-${event.id}" type="date" value=${event.startDate} />
+    </td>
+    <td>
+      <input id="endDate__input-${event.id}" type="date" value=${event.endDate} />
+    </td>
+    <td><button type="submit">Save</button></td>
+    <td>
+      <button type="button" class="cancel-edit-event__button">
+        Cancel Edit
+      </button>
+    </td>
+    </form>
+          `;
+    return eventElement;
   }
 
   createEventElement(event) {
     const eventElement = document.createElement("tr");
     eventElement.classList.add("event");
     eventElement.setAttribute("id", event.id);
+    console.log("create html for event with id " + event.id);
     eventElement.innerHTML = `
           <th scope="row">${event.eventName}</th>
           <td>${event.startDate}</td>
           <td>${event.endDate}</td>
-          <td><button >Edit</button></td>
+          <td><button class="edit-event__button">Edit </button></td>
           <td><button class="event__del-btn">Delete</button></td>
           `;
     return eventElement;
@@ -133,6 +173,7 @@ class EventsController {
 
   setUpEvents() {
     this.setUpSubmitEvent();
+    this.setUpEditEvent();
     this.setUpDeleteEvent();
   }
 
@@ -155,18 +196,22 @@ class EventsController {
       }
     });
   }
-  
+
 
   setUpEditEvent() {
-    //event delegation
     this.view.eventList.addEventListener("click", async (e) => {
       const elem = e.target;
-      if (elem.classList.contains("event__edit-btn")) {
-        const eventElem = elem.parentElement.parentElement;
-        const editId = eventElem.id;
-        // await eventsAPIs.postEvent(deleteId);
-        // this.model.deleteEvent(deleteId);
-        // this.view.removeEventElem(deleteId);
+      if (elem.classList.contains("cancel-edit-event__button")) {
+        const eventId = elem.parentElement.parentElement.id;
+        console.log(eventId)
+        let editForm = document.getElementById(`edit-events-form-${eventId}`);
+        editForm.parentElement.style.visibility = "collapse"; 
+      }
+      if (elem.classList.contains("edit-event__button")) {
+        const eventId = elem.parentElement.parentElement.id;
+        console.log(eventId)
+        let editForm = document.getElementById(`edit-events-form-${eventId}`);
+        editForm.parentElement.style.visibility = "initial"; 
       }
     });
   }
