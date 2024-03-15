@@ -11,6 +11,16 @@ const eventsAPIs = (function () {
     return fetch(API_URL).then((res) => res.json());
   }
 
+  async function putEvent(id, newEvent) {
+    return fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newEvent),
+    }).then((res) => res.json());
+  }
+
   async function postEvent(newEvent) {
     return fetch(API_URL, {
       method: "POST",
@@ -29,6 +39,7 @@ const eventsAPIs = (function () {
 
   return {
     getEvent,
+    putEvent,
     getEvents,
     postEvent,
     deleteEvent,
@@ -144,15 +155,25 @@ class EventsView {
     return eventElement;
   }
 
+
+  updateEvent(evenId, newEvent) {
+    const eventElement = document.createElement("tr");
+
+    document.getElementById(`${evenId}-eventName__td`).innerHTML = newEvent["eventName"]
+    document.getElementById(`${evenId}-startDate__td`).innerHTML = newEvent["startDate"]
+    document.getElementById(`${evenId}-endDate__td`).innerHTML = newEvent["endDate"]
+
+  }
+
   createEventElement(event) {
     const eventElement = document.createElement("tr");
     eventElement.classList.add("event");
     eventElement.setAttribute("id", event.id);
     console.log("create html for event with id " + event.id);
     eventElement.innerHTML = `
-          <th scope="row">${event.eventName}</th>
-          <td>${event.startDate}</td>
-          <td>${event.endDate}</td>
+          <th scope="row" id=${event.id}-eventName__td>${event.eventName}</th>
+          <td id=${event.id}-startDate__td>${event.startDate}</td>
+          <td id=${event.id}-endDate__td>${event.endDate}</td>
           <td><button class="edit-event__button">Edit </button></td>
           <td><button class="event__del-btn">Delete</button></td>
           `;
@@ -214,12 +235,14 @@ class EventsController {
     });
   }
 
+  
   setUpEditEvent() {
+
     this.setUpEditEventToggle();
 
     this.view.eventList.addEventListener("click", async (e) => {
-      const elem = e.target;
 
+      const elem = e.target;
       if (elem.classList.contains("update-event__button")) {
         const eventId = elem.parentElement.parentElement.id;
         let eventInput = {
@@ -227,19 +250,16 @@ class EventsController {
           startDate: document.getElementById(`startDate__input-${eventId}`).value,
           endDate: document.getElementById(`endDate__input-${eventId}`).value,
         };
-        
-        // console.log(eventInput);
-        // const title = input.value;
-        // if (!title) {
-        //   return;
-        // }
 
-        const newEvent = await eventsAPIs.postEvent(eventInput);
-        // this.model.postEvent(newEvent);
-        //   console.log(this.model.getEvents());
-        this.view.renderNewEvent(newEvent);
-        // this.view.clearInput();
+        const newEvent = await eventsAPIs.putEvent(eventId, eventInput);
+
+        this.view.updateEvent(eventId, eventInput);
+        let editForm = document.getElementById(`edit-events-form-${eventId}`);
+        editForm.parentElement.style.visibility = "collapse";
       }
+
+      
+      
     });
   }
 
