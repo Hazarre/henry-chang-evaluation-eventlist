@@ -1,0 +1,28 @@
+#add-event__button {
+    color: white;
+    background-color: rgb(12, 207, 237);
+    border-radius: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none; /* Add this line to remove the border */
+}
+
+    
+
+table {
+    border-collapse: collapse;
+    border: none;
+}
+
+table, th, td {
+    border: none;
+}
+
+tbody tr {
+    background-color: rgba(70, 70, 74, 0.758);
+    margin-bottom: 10px; 
+}
+
+td {
+    text-align: center;
+}
