@@ -1,7 +1,6 @@
 // json server has to be in a different folder
 
 const eventsAPIs = (function () {
-
   const API_URL = "http://localhost:3000/events";
 
   async function getEvents() {
@@ -38,133 +37,165 @@ let eventMusic = {
   id: "30a1",
 };
 
-// eventsAPIs.getEvents().then(
-//   (res) => console.log("GET Request successful: ", res)
-// );
+class EventsModel {
+  //   // #events;
+  //   // constructor(events = []) {
+  //   //   this.#events = events;
+  //   // }
+  //   // getEvents() {
+  //   //   return this.#events;
+  //   // }
+  //   // setEvents(newEvents) {
+  //   //   this.#events = newEvents;
+  //   // }
+  // postEvent(newEvent) {
+  //   this.#events.push(newEvent);
+  // }
+  //   // deleteEvent(id) {
+  //   //   this.#events = this.#events.filter((event) => event.id !== id);
+  //   // }
+}
 
-// eventsAPIs.deleteEvent("30a1").then(
-//   (res) => console.log("DELELTE Request successful: ", res)
-// );
+class EventsView {
+  constructor() {
+    this.newEventForm = document.querySelector("#new-events-form");
+    this.newEventFormDisplay = document.querySelector(
+      "#new-events-form__tfoot"
+    );
+    this.addEventButton = document.querySelector("#add-event__button");
+    this.cancelAddEventButton = document.querySelector(
+      "#cancel-add-event__button"
+    );
+    this.eventNameInput = document.querySelector("#eventName__input");
+    this.startDateInput = document.querySelector("#startDate__input");
+    this.endDateInput = document.querySelector("#endDate__input");
+    this.eventList = document.querySelector("#events__tbody");
+    this.init_view();
+  }
 
-// eventsAPIs.postEvent(eventMusic).then(
-//   (res) => console.log("POST Request successful: ", res)
-// );
+  init_view() {
+    this.newEventFormDisplay.style.visibility = "collapse";
+    this.cancelAddEventButton.addEventListener("click", () => {
+      this.newEventFormDisplay.style.visibility = "collapse";
+    });
+    this.addEventButton.addEventListener("click", () => {
+      this.newEventFormDisplay.style.visibility = "initial";
+    });
+  }
 
-// class EventsModel {
-//   // #events;
-//   // constructor(events = []) {
-//   //   this.#events = events;
-//   // }
-//   // getEvents() {
-//   //   return this.#events;
-//   // }
-//   // setEvents(newEvents) {
-//   //   this.#events = newEvents;
-//   // }
-//   // postEvent(newEvent) {
-//   //   this.#events.push(newEvent);
-//   // }
-//   // deleteEvent(id) {
-//   //   this.#events = this.#events.filter((event) => event.id !== id);
-//   // }
-// }
+  clearInput() {
+    this.eventNameInput.value = "";
+    this.startDateInput.value = "";
+    this.endDateInput.value = "";
+  }
 
-// class EventsView {
-//   constructor() {
-//     this.newEventForm = document.querySelector(".new-event-form");
-//     this.eventInput = document.querySelector("#new-event");
-//     this.eventList = document.querySelector(".event-list");
-//   }
+  renderEvents(events) {
+    this.eventList.innerHTML = "";
+    events.forEach((event) => {
+      this.renderNewEvent(event);
+    });
+  }
 
-//   clearInput() {
-//     this.eventInput.value = "";
-//   }
+  removeEventElem(id) {
+    document.getElementById(id).remove();
+  }
 
-//   renderEvents(events) {
-//     this.eventList.innerHTML = "";
-//     events.forEach((event) => {
-//       this.renderNewEvent(event);
-//     });
-//   }
+  renderNewEvent(newEvent) {
+    this.eventList.appendChild(this.createEventElement(newEvent));
+  }
 
-//   removeEventElem(id) {
-//     document.getElementById(id).remove();
-//   }
+  createEventElement(event) {
+    const eventElement = document.createElement("tr");
+    eventElement.classList.add("event");
+    eventElement.setAttribute("id", event.id);
+    eventElement.innerHTML = `
+          <th scope="row">${event.eventName}</th>
+          <td>${event.startDate}</td>
+          <td>${event.endDate}</td>
+          <td><button >Edit</button></td>
+          <td><button class="event__del-btn">Delete</button></td>
+          `;
+    return eventElement;
+  }
+}
 
-//   renderNewEvent(newEvent) {
-//     this.eventList.appendChild(this.createEventElement(newEvent));
-//   }
+class EventsController {
+  constructor(view, model) {
+    this.view = view;
+    this.model = model;
+    this.init();
+  }
 
-//   createEventElement(event) {
-//     const eventElement = document.createElement("div");
-//     eventElement.classList.add("event");
-//     eventElement.setAttribute("id", event.id);
-//     eventElement.innerHTML = `<div class="event__title">${event.title}</div>
-//     <div class="event__actions">
-//       <button class="event__del-btn">Delete</button>
-//       <button class="event__edit-btn">Edit</button>
-//     </div>`;
-//     return eventElement;
-//   }
-// }
+  init() {
+    this.setUpEvents();
+    this.fetchEvents();
+  }
 
-// class EventsController {
-//   constructor(view, model) {
-//     this.view = view;
-//     this.model = model;
-//     this.init();
-//   }
+  setUpEvents() {
+    this.setUpSubmitEvent();
+    this.setUpDeleteEvent();
+  }
 
-//   init() {
-//     this.setUpEvents();
-//     this.fetchEvents();
-//   }
+  async fetchEvents() {
+    const events = await eventsAPIs.getEvents();
+    // this.model.setEvents(events);
+    this.view.renderEvents(events);
+  }
 
-//   setUpEvents() {
-//     this.setUpSubmitEvent();
-//     this.setUpDeleteEvent();
-//   }
+  setUpDeleteEvent() {
+    //event delegation
+    this.view.eventList.addEventListener("click", async (e) => {
+      const elem = e.target;
+      if (elem.classList.contains("event__del-btn")) {
+        const eventElem = elem.parentElement.parentElement;
+        const deleteId = eventElem.id;
+        await eventsAPIs.deleteEvent(deleteId);
+        // this.model.deleteEvent(deleteId);
+        this.view.removeEventElem(deleteId);
+      }
+    });
+  }
+  
 
-//   async fetchEvents() {
-//     const events = await eventsAPIs.getEvents();
-//     // this.model.setEvents(events);
-//     this.view.renderEvents(events);
-//   }
+  setUpEditEvent() {
+    //event delegation
+    this.view.eventList.addEventListener("click", async (e) => {
+      const elem = e.target;
+      if (elem.classList.contains("event__edit-btn")) {
+        const eventElem = elem.parentElement.parentElement;
+        const editId = eventElem.id;
+        // await eventsAPIs.postEvent(deleteId);
+        // this.model.deleteEvent(deleteId);
+        // this.view.removeEventElem(deleteId);
+      }
+    });
+  }
 
-//   setUpDeleteEvent() {
-//     //event delegation
-//     this.view.eventList.addEventListener("click", async (e) => {
-//       const elem = e.target;
-//       if (elem.classList.contains("event__del-btn")) {
-//         const eventElem = elem.parentElement.parentElement;
-//         const deleteId = eventElem.id;
-//         await eventsAPIs.deleteEvent(deleteId);
-//         this.model.deleteEvent(deleteId);
-//         this.view.removeEventElem(deleteId);
-//       }
-//     });
-//   }
+  setUpSubmitEvent() {
+    this.view.newEventForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-//   setUpSubmitEvent() {
-//     this.view.newEventForm.addEventListener("submit", async (e) => {
-//       e.preventDefault();
-//       const input = this.view.eventInput;
-//       const title = input.value;
-//       if (!title) {
-//         return;
-//       }
+      let eventInput = {
+        eventName: this.view.eventNameInput.value,
+        startDate: this.view.startDateInput.value,
+        endDate: this.view.endDateInput.value,
+      };
 
-//       const newEvent = await eventsAPIs.postEvent({
-//         title,
-//       });
-//       this.model.postEvent(newEvent);
-//       //   console.log(this.model.getEvents());
-//       this.view.renderNewEvent(newEvent);
-//       this.view.clearInput();
-//     });
-//   }
-// }
+      console.log(eventInput);
+      // const title = input.value;
+      // if (!title) {
+      //   return;
+      // }
 
-// const eventsView = new EventsView();
-// const eventsModel = new EventsModel();
-// const eventsController = new EventsController(eventsView, eventsModel);
+      const newEvent = await eventsAPIs.postEvent(eventInput);
+      // this.model.postEvent(newEvent);
+      //   console.log(this.model.getEvents());
+      this.view.renderNewEvent(newEvent);
+      this.view.clearInput();
+    });
+  }
+}
+
+const eventsView = new EventsView();
+const eventsModel = new EventsModel();
+const eventsController = new EventsController(eventsView, eventsModel);

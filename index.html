@@ -1,27 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event MVC App</title>
+    <link type="stylesheet" src="style.css">
   </head>
   <body>
     <h1>Events</h1>
-    <form class="new-events-form">
-      <input id="new-events" />
-      <button id="add-events-btn">add events</button>
-    </form>
-    <div class="events-list">
-      <!-- <div class="events">
-        <div class="events__title">Example events Item</div>
-        <div class="events__actions">
-          <button class="events__del-btn">Delete</button>
-          <button class="events__edit-btn">Edit</button>
-        </div>
-      </div> -->
-    </div>
 
-    
+    <table>
+      <caption>
+        Events Table
+      </caption>
+      <thead>
+        <tr>
+          <button id="add-event__button"> New Event</button>
+        </tr>
+        <tr>
+          <th scope="col">Event</th>
+          <th scope="col">Start Date</th>
+          <th scope="col">End Date</th>
+        </tr>
+      </thead>
+      <tbody id="events__tbody">
+      </tbody>
+
+      <tfoot id="new-events-form__tfoot">
+        <form id="new-events-form">
+        <tr>
+            <td>
+              <input id="eventName__input" />
+            </td>
+            <td>
+              <input id="startDate__input" type="date" />
+            </td>
+            <td>
+              <input id="endDate__input" type="date"/>
+            </td>
+            <td><button type="submit"> Submit </button></td>
+            <td><button type="button" id="cancel-add-event__button"> Cancel </button></td>
+          </tr>
+        </form>
+      </tfoot>
+    </table>
+
     <script src="index.js"></script>
   </body>
 </html>
