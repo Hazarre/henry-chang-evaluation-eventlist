@@ -1,28 +1,59 @@
-#add-event__button {
+#toggle-add-event__button {
     color: white;
-    background-color: rgb(12, 207, 237);
-    border-radius: 5px;
+    background-color: #008cba;
     padding-top: 10px;
     padding-bottom: 10px;
-    border: none; /* Add this line to remove the border */
+    border: none;
 }
 
-    
+svg, p { 
+    pointer-events:none
+}
+
+button {
+    max-height: 30px;
+    min-width: 30px;
+    border-radius: 5px;
+    border: none;
+    z-index: 1;
+}
+
+.svg {
+    z-index: -10;
+    pointer-events: none
+}
+
+.update-event__button, .edit-event__button, #add-event__button, #toggle-add-event__button {
+    background-color: #008cba;
+}
+
+.cancel-edit-event__button, .delete-event__button, #cancel-add-event__button {
+    background-color: #c94c4c;
+}
+
+
+
+/* Tan: #e6e2d3
+Traffic white: #f0f0f0
+Yellow green: #4caf50
+Vermillion red: #c94c4c
+Blue:  */
 
 table {
     border-collapse: collapse;
     border: none;
+    text-align: center;
 }
 
-table, th, td {
-    border: none;
+th {
+    padding-top: 10px;
+    padding-bottom: 10px;
+
 }
 
 tbody tr {
-    background-color: rgba(70, 70, 74, 0.758);
-    margin-bottom: 10px; 
-}
+    background-color: rgba(126, 126, 128, 0.758);
+    margin-bottom: 10px;
 
-td {
-    text-align: center;
+
 }

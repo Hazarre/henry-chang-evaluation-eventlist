@@ -5,27 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event MVC App</title>
     <link rel="stylesheet" href="style.css">
-    
     <script src="index.js" defer></script>
   </head>
   <body>
     <h1>Events</h1>
-
+  
     <table>
       <caption>
-        <button id="add-event__button">Add New Event</button>
+        <button id="toggle-add-event__button">Add New Event</button>
       </caption>
       <thead>
         <tr>
           <th scope="col">Event</th>
           <th scope="col">Start Date</th>
           <th scope="col">End Date</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody id="events__tbody">          
       </tbody>
 
-      <tfoot id="new-events-form__tfoot">
+      <tfoot id="add-events-form__tfoot">
         <form id="new-events-form">
         <tr>
             <td>
@@ -37,8 +37,10 @@
             <td>
               <input id="endDate__input" type="date"/>
             </td>
-            <td><button type="submit"> Submit </button></td>
-            <td><button type="button" id="cancel-add-event__button"> Cancel </button></td>
+            <td>
+              <button type="submit" id="add-event__button"> </button>
+              <button type="button" id="cancel-add-event__button"></button>
+            </td>
           </tr>
         </form>
       </tfoot>
