@@ -35,8 +35,6 @@ const eventsAPIs = (function () {
   };
 })();
 
-
-
 let eventMusic = {
   eventName: "Music Festival",
   startDate: "2023-01-20",
@@ -117,14 +115,14 @@ class EventsView {
 
   createEditEventElement(event) {
     const eventElement = document.createElement("tr");
-    eventElement.style.visibility = "collapse"
+    eventElement.style.visibility = "collapse";
     eventElement.classList.add("event-view");
     eventElement.setAttribute("id", event.id);
     console.log("create html for event with id " + event.id);
     eventElement.innerHTML = `
     <form id="edit-events-form-${event.id}">
     <td>
-      <input id="eventName__input-${event.id}" value=${event.eventName} />
+      <input id="eventName__input-${event.id}" value="${event.eventName}" />
     </td>
     <td>
       <input id="startDate__input-${event.id}" type="date" value=${event.startDate} />
@@ -132,7 +130,10 @@ class EventsView {
     <td>
       <input id="endDate__input-${event.id}" type="date" value=${event.endDate} />
     </td>
-    <td><button type="submit">Save</button></td>
+    <td>
+      <button type="submit" class="update-event__button">
+      Update
+      </button></td>
     <td>
       <button type="button" class="cancel-edit-event__button">
         Cancel Edit
@@ -197,21 +198,47 @@ class EventsController {
     });
   }
 
-
-  setUpEditEvent() {
+  setUpEditEventToggle() {
     this.view.eventList.addEventListener("click", async (e) => {
       const elem = e.target;
       if (elem.classList.contains("cancel-edit-event__button")) {
         const eventId = elem.parentElement.parentElement.id;
-        console.log(eventId)
         let editForm = document.getElementById(`edit-events-form-${eventId}`);
-        editForm.parentElement.style.visibility = "collapse"; 
+        editForm.parentElement.style.visibility = "collapse";
       }
       if (elem.classList.contains("edit-event__button")) {
         const eventId = elem.parentElement.parentElement.id;
-        console.log(eventId)
         let editForm = document.getElementById(`edit-events-form-${eventId}`);
-        editForm.parentElement.style.visibility = "initial"; 
+        editForm.parentElement.style.visibility = "initial";
+      }
+    });
+  }
+
+  setUpEditEvent() {
+    this.setUpEditEventToggle();
+
+    this.view.eventList.addEventListener("click", async (e) => {
+      const elem = e.target;
+
+      if (elem.classList.contains("update-event__button")) {
+        const eventId = elem.parentElement.parentElement.id;
+        let eventInput = {
+          eventName: document.getElementById(`eventName__input-${eventId}`).value,
+          startDate: document.getElementById(`startDate__input-${eventId}`).value,
+          endDate: document.getElementById(`endDate__input-${eventId}`).value,
+        };
+        
+        // console.log(eventInput);
+        // const title = input.value;
+        // if (!title) {
+        //   return;
+        // }
+
+        const newEvent = await eventsAPIs.postEvent(eventInput);
+        // this.model.postEvent(newEvent);
+        //   console.log(this.model.getEvents());
+        this.view.renderNewEvent(newEvent);
+        // this.view.clearInput();
       }
     });
   }
