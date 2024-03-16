@@ -92,7 +92,7 @@ class EventsView {
   }
 
   init_view() {
-    document.querySelector("#add-event__button").innerHTML = SaveIcon; 
+    document.querySelector("#add-event__button").innerHTML = AddIcon; 
     document.querySelector("#cancel-add-event__button").innerHTML = CancelIcon; 
 
     this.newEventFormDisplay.style.visibility = "collapse";
