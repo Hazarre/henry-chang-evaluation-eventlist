@@ -74,9 +74,6 @@ class EventsModel {
   //   // }
 }
 
-function editEventHandler(id) {
-  console.log(id);
-}
 class EventsView {
   constructor() {
     this.newEventForm = document.querySelector("#new-events-form");
@@ -134,7 +131,6 @@ class EventsView {
     eventElement.style.visibility = "collapse";
     eventElement.classList.add("event-view");
     eventElement.setAttribute("id", event.id);
-    console.log("create html for event with id " + event.id);
     eventElement.innerHTML = `
     <form id="edit-events-form-${event.id}">
     <td>
@@ -173,7 +169,7 @@ class EventsView {
     eventElement.classList.add("event");
     eventElement.setAttribute("id", event.id);
     eventElement.innerHTML = `
-          <th scope="row" id=${event.id}-eventName__td>${event.eventName}</th>
+          <td id=${event.id}-eventName__td>${event.eventName}</th>
           <td id=${event.id}-startDate__td>${event.startDate}</td>
           <td id=${event.id}-endDate__td>${event.endDate}</td>
           <td>
